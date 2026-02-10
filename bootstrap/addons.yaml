@@ -9,7 +9,8 @@ spec:
       repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
       revision: HEAD
       directories:
-      - path: environments/addons/*
+      - path: environments/addons
+        recurse: true
   template:
     metadata:
       name: 'addons'

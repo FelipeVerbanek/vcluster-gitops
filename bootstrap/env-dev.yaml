@@ -9,7 +9,8 @@ spec:
       repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
       revision: HEAD
       directories:
-      - path: environments/dev/*
+      - path: environments/dev
+        recurse: true
   template:
     metadata:
       name: 'dev-{{path.basename}}'
