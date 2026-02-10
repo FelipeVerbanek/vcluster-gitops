@@ -1,22 +1,30 @@
----
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: env-dev-app
+  name: env-dev
   namespace: argocd
 spec:
-  project: dev
-  sources:
-    - path: environments/dev
+  generators:
+  - git:
       repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
-      targetRevision: HEAD
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
+      revision: HEAD
+      directories:
+      - path: environments/dev/*
+  template:
+    metadata:
+      name: 'dev-{{path.basename}}'
+    spec:
+      project: dev
+      source:
+        repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://10.89.0.3:6443
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
