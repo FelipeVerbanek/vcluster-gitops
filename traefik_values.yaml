@@ -1,0 +1,38 @@
+---
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowExternalNameServices: true
+    namespaces: []
+
+  kubernetesIngress:
+    enabled: true
+    namespaces: []
+    allowExternalNameServices: true
+    publishedService:
+      enabled: true
+
+ports:
+  web:
+    port: 32080
+    nodePort: 32080
+  websecure:
+    port: 32443
+    nodePort: 32443
+  traefik:
+    port: 32090
+    nodePort: 32090
+
+ingressRoute:
+  dashboard:
+    enabled: true
+
+logs:
+  access:
+    enabled: true
+
+metrics:
+  addInternals: true
+
+tracing:
+  addInternals: true
