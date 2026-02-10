@@ -1,20 +1,30 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: addons
   namespace: argocd
 spec:
-  project: default
   generators:
   - git:
       repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
       revision: HEAD
       directories:
       - path: environments/addons/*
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  template:
+    metadata:
+      name: 'addons'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
