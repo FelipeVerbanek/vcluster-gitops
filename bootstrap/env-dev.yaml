@@ -20,8 +20,8 @@ spec:
         targetRevision: HEAD
         path: '{{path}}'
       destination:
-        server: https://10.89.0.3:6443
-        namespace: '{{path.basename}}'
+        server: https://kubernetes.default.svc
+        namespace: argocd
       syncPolicy:
         automated:
           prune: true
