@@ -13,7 +13,7 @@ spec:
       - path: environments/addons/**
   template:
     metadata:
-      name: 'addons'
+      name: 'addon-{{path.basename}}'
     spec:
       project: default
       source:
