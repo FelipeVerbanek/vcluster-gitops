@@ -13,4 +13,4 @@ spec:
     hostnameImmutable: true
     url:
       type: Static
-      static: http://localstack.addon-localstack.svc.cluster.local:4566
+      static: http://addon-localstack.localstack-system.svc.cluster.local:4566
