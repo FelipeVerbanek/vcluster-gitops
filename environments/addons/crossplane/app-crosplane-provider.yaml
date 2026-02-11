@@ -15,7 +15,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
-    targetRevision: HEAD
+    targetRevision: master
     path: crossplane-providers
   destination:
     server: https://kubernetes.default.svc
