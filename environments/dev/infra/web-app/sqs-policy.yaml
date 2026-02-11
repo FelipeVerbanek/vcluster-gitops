@@ -26,4 +26,4 @@ spec:
         }
     name: web-app
   providerConfigRef:
-    name: provider-aws
+    name: localstack
