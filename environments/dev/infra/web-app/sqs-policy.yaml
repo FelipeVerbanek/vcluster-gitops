@@ -2,6 +2,8 @@ apiVersion: iam.aws.crossplane.io/v1beta1
 kind: Policy
 metadata:
   name: web-app-dev
+  labels:
+    app: web-app-dev
 spec:
   deletionPolicy: Delete
   forProvider:

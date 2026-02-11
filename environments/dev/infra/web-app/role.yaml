@@ -1,0 +1,40 @@
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Role
+metadata:
+  name: web-app-dev-role
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "eks.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    description: Role for web-app service account
+  providerConfigRef:
+    name: localstack
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: web-app-dev-policy-attachment
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    policyArnSelector:
+      matchLabels:
+        app: web-app-dev
+    roleNameSelector:
+      matchLabels:
+        app: web-app-dev
+  providerConfigRef:
+    name: localstack
