@@ -51,6 +51,11 @@ spec:
         targetRevision: master
         path: crossplane-providers
         namespace: crossplane-system
+      - name: localstack-aws-secret
+        repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+        targetRevision: master
+        path: localstack-secret
+        namespace: localstack-system     
   
   template:
     metadata:
