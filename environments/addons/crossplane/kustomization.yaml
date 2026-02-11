@@ -3,9 +3,5 @@ kind: Kustomization
 
 namespace: crossplane-system
 
-helmCharts:
-- name: crossplane
-  repo: https://charts.crossplane.io/stable
-  version: 2.1.4
-  releaseName: crossplane
-  namespace: crossplane-system
+resources:
+- crossplane-app.yaml
