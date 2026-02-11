@@ -4,25 +4,26 @@ metadata:
   name: addons
   namespace: argocd
 spec:
-
   generators:
-  - git:
-      repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
-      revision: master
-      directories:
-      - path: environments/addons/**
+  - list:
+      elements:
+      - name: crossplane
+        chart: crossplane
+        repoURL: https://charts.crossplane.io/stable
+        targetRevision: 2.1.4
+        namespace: crossplane-system
   template:
     metadata:
-      name: 'addon-{{path.basename}}'
+      name: 'addon-{{name}}'
     spec:
       project: default
       source:
-        repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
-        targetRevision: master
-        path: '{{path}}'
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        chart: '{{chart}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: argocd
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           prune: true
