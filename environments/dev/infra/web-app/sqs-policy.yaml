@@ -26,6 +26,6 @@ spec:
               }
           ]
         }
-    name: web-app
+    name: web-app-dev
   providerConfigRef:
     name: localstack
