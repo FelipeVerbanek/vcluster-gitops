@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: addons
+  name: addons-helm
   namespace: argocd
 spec:
   generators:
@@ -12,6 +12,7 @@ spec:
         repoURL: https://charts.crossplane.io/stable
         targetRevision: 2.1.4
         namespace: crossplane-system
+  
   template:
     metadata:
       name: 'addon-{{name}}'
@@ -21,6 +22,40 @@ spec:
         repoURL: '{{repoURL}}'
         targetRevision: '{{targetRevision}}'
         chart: '{{chart}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: addons-git
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - name: crossplane-providers
+        repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+        targetRevision: master
+        path: crossplane-providers
+        namespace: crossplane-system
+  
+  template:
+    metadata:
+      name: 'addon-{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{namespace}}'
