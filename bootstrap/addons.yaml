@@ -4,13 +4,12 @@ metadata:
   name: addons
   namespace: argocd
 spec:
-  generators:
-  - git:
-      repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
-      revision: HEAD
-      directories:
-      - path: environments/addons
-        recurse: true
+  source:
+    repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+    path: environments/addons
+    targetRevision: master
+    directory:
+      recurse: true
   template:
     metadata:
       name: 'addons'
