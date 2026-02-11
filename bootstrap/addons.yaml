@@ -12,6 +12,11 @@ spec:
         repoURL: https://charts.crossplane.io/stable
         targetRevision: 2.1.4
         namespace: crossplane-system
+      - name: localstack
+        chart: localstack
+        repoURL: https://localstack.github.io/helm-charts
+        targetRevision: 0.6.27
+        namespace: localstack-system    
   
   template:
     metadata:
