@@ -22,7 +22,7 @@ spec:
                       "sqs:ReceiveMessage",
                       "sqs:SendMessage"
                   ],
-                  "Resource": "*"
+                  "Resource": "arn:aws:sqs:us-east-1:000000000000:web-app-dev-queue"
               }
           ]
         }

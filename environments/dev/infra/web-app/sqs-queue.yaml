@@ -1,0 +1,17 @@
+---
+apiVersion: sqs.aws.crossplane.io/v1beta1
+kind: Queue
+metadata:
+  name: web-app-dev-queue
+  labels:
+    app: web-app-dev
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    region: us-east-1
+    delaySeconds: 0
+    messageRetentionPeriod: 345600
+    receiveMessageWaitTimeSeconds: 0
+    visibilityTimeout: 30
+  providerConfigRef:
+    name: localstack
