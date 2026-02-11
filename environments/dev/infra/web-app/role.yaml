@@ -3,6 +3,8 @@ apiVersion: iam.aws.crossplane.io/v1beta1
 kind: Role
 metadata:
   name: web-app-dev-role
+  labels:
+    app: web-app-dev
 spec:
   deletionPolicy: Delete
   forProvider:
