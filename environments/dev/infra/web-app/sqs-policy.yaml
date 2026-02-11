@@ -1,23 +1,29 @@
-apiVersion: iam.aws.upbound.io/v1beta1
+apiVersion: iam.aws.crossplane.io/v1beta1
 kind: Policy
 metadata:
-  name: sqs-full-access-policy
-  labels:
-    policy: sqs-full-access
+  name: web-app-dev
 spec:
+  deletionPolicy: Delete
   forProvider:
-    name: sqs-full-access-policy
-    description: "Policy that grants full access to SQS"
-    policy: |
+    description: Allow airflow access to sqs
+    document: >
       {
-        "Version": "2012-10-17",
-        "Statement": [
-          {
-            "Effect": "Allow",
-            "Action": "sqs:*",
-            "Resource": "*"
-          }
-        ]
-      }
+          "Version": "2012-10-17",
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Action": [
+                      "sqs:ChangeMessageVisibility",
+                      "sqs:DeleteMessage",
+                      "sqs:GetQueueAttributes",
+                      "sqs:GetQueueUrl",
+                      "sqs:ReceiveMessage",
+                      "sqs:SendMessage"
+                  ],
+                  "Resource": "*"
+              }
+          ]
+        }
+    name: web-app
   providerConfigRef:
-    name: default
+    name: provider-aws
