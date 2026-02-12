@@ -18,7 +18,7 @@ spec:
       resources:
       - name: dlq
         base:
-          apiVersion: sqs.aws.upbound.io/v1beta1
+          apiVersion: sqs.aws.crossplane.io/v1beta1
           kind: Queue
           spec:
             forProvider:
@@ -48,7 +48,7 @@ spec:
 
       - name: main-queue
         base:
-          apiVersion: sqs.aws.upbound.io/v1beta1
+          apiVersion: sqs.aws.crossplane.io/v1beta1
           kind: Queue
           spec:
             forProvider:
@@ -141,4 +141,4 @@ spec:
                     "Resource": "arn:aws:sqs:us-east-1:000000000000:%s"
                   }]
                 }
-          toFieldPath: spec.forProvider.policy
+          toFieldPath: spec.forProvider.document
