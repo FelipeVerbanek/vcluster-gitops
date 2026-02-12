@@ -1,0 +1,47 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xsqsqueues.messaging.example.io
+spec:
+  group: messaging.example.io
+  names:
+    kind: XSQSQueue
+    plural: xsqsqueues
+  claimNames:
+    kind: SQSQueue
+    plural: sqsqueues
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              queueName:
+                type: string
+              maxReceiveCount:
+                type: integer
+                default: 3
+              visibilityTimeout:
+                type: integer
+                default: 30
+              messageRetentionPeriod:
+                type: integer
+                default: 345600
+              iamRoleName:
+                type: string
+            required:
+            - queueName
+          status:
+            type: object
+            properties:
+              queueUrl:
+                type: string
+              dlqUrl:
+                type: string
+              roleArn:
+                type: string

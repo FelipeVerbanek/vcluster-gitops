@@ -1,0 +1,179 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: sqs-with-dlq
+spec:
+  compositeTypeRef:
+    apiVersion: messaging.example.io/v1alpha1
+    kind: XSQSQueue
+  
+  resources:
+  - name: dlq
+    base:
+      apiVersion: sqs.aws.upbound.io/v1beta1
+      kind: Queue
+      spec:
+        forProvider:
+          messageRetentionSeconds: 1209600
+    patches:
+    - fromFieldPath: spec.queueName
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-dlq"
+    - fromFieldPath: spec.queueName
+      toFieldPath: spec.forProvider.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-dlq"
+    - toFieldPath: status.dlqUrl
+      fromFieldPath: status.atProvider.url
+      policy:
+        fromFieldPath: Optional
+
+  - name: main-queue
+    base:
+      apiVersion: sqs.aws.upbound.io/v1beta1
+      kind: Queue
+      spec:
+        forProvider:
+          visibilityTimeoutSeconds: 30
+          messageRetentionSeconds: 345600
+    patches:
+    - fromFieldPath: spec.queueName
+      toFieldPath: metadata.name
+    - fromFieldPath: spec.queueName
+      toFieldPath: spec.forProvider.name
+    - fromFieldPath: spec.visibilityTimeout
+      toFieldPath: spec.forProvider.visibilityTimeoutSeconds
+    - fromFieldPath: spec.messageRetentionPeriod
+      toFieldPath: spec.forProvider.messageRetentionSeconds
+    - toFieldPath: status.queueUrl
+      fromFieldPath: status.atProvider.url
+      policy:
+        fromFieldPath: Optional
+
+  - name: redrive-policy
+    base:
+      apiVersion: sqs.aws.upbound.io/v1beta1
+      kind: QueueRedrivePolicy
+      spec:
+        forProvider:
+          queueUrlSelector:
+            matchControllerRef: true
+    patches:
+    - fromFieldPath: spec.queueName
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-redrive"
+    - fromFieldPath: spec.maxReceiveCount
+      toFieldPath: spec.forProvider.redrivePolicy
+      transforms:
+      - type: string
+        string:
+          fmt: '{"deadLetterTargetArn":"arn:aws:sqs:us-east-1:000000000000:%s-dlq","maxReceiveCount":%d}'
+      combine:
+        variables:
+        - fromFieldPath: spec.queueName
+        - fromFieldPath: spec.maxReceiveCount
+        strategy: string
+
+  - name: iam-role
+    base:
+      apiVersion: iam.aws.upbound.io/v1beta1
+      kind: Role
+      spec:
+        forProvider:
+          assumeRolePolicy: |
+            {
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "eks.amazonaws.com",
+                  "Federated": "arn:aws:iam::000000000000:oidc-provider/oidc.eks.us-east-1.amazonaws.com"
+                },
+                "Action": "sts:AssumeRoleWithWebIdentity"
+              }]
+            }
+    patches:
+    - fromFieldPath: spec.iamRoleName
+      toFieldPath: metadata.name
+    - fromFieldPath: spec.iamRoleName
+      toFieldPath: spec.forProvider.name
+    - toFieldPath: status.roleArn
+      fromFieldPath: status.atProvider.arn
+      policy:
+        fromFieldPath: Optional
+
+  - name: iam-policy
+    base:
+      apiVersion: iam.aws.upbound.io/v1beta1
+      kind: RolePolicy
+      spec:
+        forProvider:
+          roleSelector:
+            matchControllerRef: true
+    patches:
+    - fromFieldPath: spec.iamRoleName
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-policy"
+    - fromFieldPath: spec.queueName
+      toFieldPath: spec.forProvider.policy
+      transforms:
+      - type: string
+        string:
+          fmt: |
+            {
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Effect": "Allow",
+                "Action": [
+                  "sqs:SendMessage",
+                  "sqs:ReceiveMessage",
+                  "sqs:DeleteMessage",
+                  "sqs:GetQueueAttributes"
+                ],
+                "Resource": "arn:aws:sqs:us-east-1:000000000000:%s"
+              }]
+            }
+
+  - name: queue-url-secret
+    base:
+      apiVersion: kubernetes.crossplane.io/v1alpha1
+      kind: Object
+      spec:
+        forProvider:
+          manifest:
+            apiVersion: v1
+            kind: Secret
+            type: Opaque
+    patches:
+    - fromFieldPath: spec.queueName
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-secret"
+    - fromFieldPath: spec.queueName
+      toFieldPath: spec.forProvider.manifest.metadata.name
+      transforms:
+      - type: string
+        string:
+          fmt: "%s-secret"
+    - fromFieldPath: status.queueUrl
+      toFieldPath: spec.forProvider.manifest.data.QUEUE_URL
+      transforms:
+      - type: string
+        string:
+          type: Convert
+          convert: ToBase64
+      policy:
+        fromFieldPath: Optional

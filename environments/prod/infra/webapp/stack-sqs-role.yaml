@@ -1,0 +1,11 @@
+apiVersion: messaging.example.io/v1alpha1
+kind: SQSQueue
+metadata:
+  name: webapp-prod
+  namespace: default
+spec:
+  queueName: my-app-queue-prod
+  maxReceiveCount: 3
+  visibilityTimeout: 30
+  messageRetentionPeriod: 345600
+  iamRoleName: webapp-role
