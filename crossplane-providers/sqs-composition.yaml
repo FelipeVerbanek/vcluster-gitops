@@ -79,11 +79,8 @@ spec:
                   "Version": "2012-10-17",
                   "Statement": [{
                     "Effect": "Allow",
-                    "Principal": {
-                      "Service": "eks.amazonaws.com",
-                      "Federated": "arn:aws:iam::000000000000:oidc-provider/oidc.eks.us-east-1.amazonaws.com"
-                    },
-                    "Action": "sts:AssumeRoleWithWebIdentity"
+                    "Principal": {"AWS": "*"},
+                    "Action": "sts:AssumeRole"
                   }]
                 }
             providerConfigRef:
