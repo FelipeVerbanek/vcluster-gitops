@@ -75,7 +75,7 @@ spec:
 
       - name: iam-role
         base:
-          apiVersion: iam.aws.upbound.io/v1beta1
+          apiVersion: iam.aws.crossplane.io/v1beta1
           kind: Role
           spec:
             forProvider:
@@ -106,7 +106,7 @@ spec:
 
       - name: iam-policy
         base:
-          apiVersion: iam.aws.upbound.io/v1beta1
+          apiVersion: iam.aws.crossplane.io/v1beta1
           kind: RolePolicy
           spec:
             forProvider:
