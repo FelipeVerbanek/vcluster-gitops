@@ -22,19 +22,14 @@ spec:
           kind: Queue
           spec:
             forProvider:
-              messageRetentionSeconds: 1209600
+              region: us-east-1
+              messageRetentionPeriod: 1209600
+            providerConfigRef:
+              name: localstack
         patches:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.queueName
           toFieldPath: metadata.name
-          transforms:
-          - type: string
-            string:
-              type: Format
-              fmt: "%s-dlq"
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.queueName
-          toFieldPath: spec.forProvider.name
           transforms:
           - type: string
             string:
@@ -52,21 +47,21 @@ spec:
           kind: Queue
           spec:
             forProvider:
-              visibilityTimeoutSeconds: 30
-              messageRetentionSeconds: 345600
+              region: us-east-1
+              visibilityTimeout: 30
+              messageRetentionPeriod: 345600
+            providerConfigRef:
+              name: localstack
         patches:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.queueName
           toFieldPath: metadata.name
         - type: FromCompositeFieldPath
-          fromFieldPath: spec.queueName
-          toFieldPath: spec.forProvider.name
-        - type: FromCompositeFieldPath
           fromFieldPath: spec.visibilityTimeout
-          toFieldPath: spec.forProvider.visibilityTimeoutSeconds
+          toFieldPath: spec.forProvider.visibilityTimeout
         - type: FromCompositeFieldPath
           fromFieldPath: spec.messageRetentionPeriod
-          toFieldPath: spec.forProvider.messageRetentionSeconds
+          toFieldPath: spec.forProvider.messageRetentionPeriod
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.url
           toFieldPath: status.queueUrl
@@ -79,7 +74,8 @@ spec:
           kind: Role
           spec:
             forProvider:
-              assumeRolePolicy: |
+              region: us-east-1
+              assumeRolePolicyDocument: |
                 {
                   "Version": "2012-10-17",
                   "Statement": [{
@@ -91,13 +87,12 @@ spec:
                     "Action": "sts:AssumeRoleWithWebIdentity"
                   }]
                 }
+            providerConfigRef:
+              name: localstack
         patches:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.iamRoleName
           toFieldPath: metadata.name
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.iamRoleName
-          toFieldPath: spec.forProvider.name
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.arn
           toFieldPath: status.roleArn
@@ -110,8 +105,11 @@ spec:
           kind: RolePolicy
           spec:
             forProvider:
-              roleSelector:
-                matchControllerRef: true
+              region: us-east-1
+              roleNameRef:
+                name: placeholder
+            providerConfigRef:
+              name: localstack
         patches:
         - type: FromCompositeFieldPath
           fromFieldPath: spec.iamRoleName
@@ -121,6 +119,9 @@ spec:
             string:
               type: Format
               fmt: "%s-policy"
+        - type: FromCompositeFieldPath
+          fromFieldPath: spec.iamRoleName
+          toFieldPath: spec.forProvider.roleNameRef.name
         - type: CombineFromComposite
           combine:
             variables:
