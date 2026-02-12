@@ -1,0 +1,11 @@
+{
+  "name": "sqs-sender",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.0.0"
+  }
+}

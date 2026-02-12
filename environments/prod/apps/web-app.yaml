@@ -6,9 +6,9 @@ metadata:
 spec:
   project: prod
   source:
-    repoURL: https://github.com/argoproj/argocd-example-apps.git
-    targetRevision: HEAD
-    path: guestbook
+    repoURL: https://github.com/FelipeVerbanek/vcluster-gitops.git
+    targetRevision: master
+    path: environments/prod/apps/webapp
   destination:
     server: https://10.89.0.3:6443
     namespace: prod-apps

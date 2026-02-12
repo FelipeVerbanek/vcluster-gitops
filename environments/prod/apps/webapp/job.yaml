@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sqs-sender
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: sqs-sender
+        image: felipeverbanek/sendmsgsqs-api:v1.0.0
+        envFrom:
+        - configMapRef:
+            name: sqs-sender-config
+        env:
+        - name: QUEUE_URL
+          value: "http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/my-app-queue-prod"
