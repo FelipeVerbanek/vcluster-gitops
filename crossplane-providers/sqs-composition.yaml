@@ -126,18 +126,5 @@ spec:
             - fromFieldPath: spec.queueName
             strategy: string
             string:
-              fmt: |
-                {
-                  "Version": "2012-10-17",
-                  "Statement": [{
-                    "Effect": "Allow",
-                    "Action": [
-                      "sqs:SendMessage",
-                      "sqs:ReceiveMessage",
-                      "sqs:DeleteMessage",
-                      "sqs:GetQueueAttributes"
-                    ],
-                    "Resource": "arn:aws:sqs:us-east-1:000000000000:%s"
-                  }]
-                }
+              fmt: '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["sqs:SendMessage","sqs:ReceiveMessage","sqs:DeleteMessage","sqs:GetQueueAttributes"],"Resource":"arn:aws:sqs:us-east-1:000000000000:%s"}]}'
           toFieldPath: spec.forProvider.document
