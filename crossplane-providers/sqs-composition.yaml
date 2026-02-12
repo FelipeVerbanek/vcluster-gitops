@@ -30,6 +30,7 @@ spec:
           transforms:
           - type: string
             string:
+              type: Format
               fmt: "%s-dlq"
         - type: FromCompositeFieldPath
           fromFieldPath: spec.queueName
@@ -37,6 +38,7 @@ spec:
           transforms:
           - type: string
             string:
+              type: Format
               fmt: "%s-dlq"
         - type: ToCompositeFieldPath
           fromFieldPath: status.atProvider.url
@@ -117,6 +119,7 @@ spec:
           transforms:
           - type: string
             string:
+              type: Format
               fmt: "%s-policy"
         - type: CombineFromComposite
           combine:
