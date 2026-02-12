@@ -97,34 +97,3 @@ spec:
           toFieldPath: status.roleArn
           policy:
             fromFieldPath: Optional
-
-      - name: iam-policy
-        base:
-          apiVersion: iam.aws.crossplane.io/v1beta1
-          kind: RolePolicy
-          spec:
-            forProvider:
-              roleNameRef:
-                name: placeholder
-            providerConfigRef:
-              name: localstack
-        patches:
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.iamRoleName
-          toFieldPath: metadata.name
-          transforms:
-          - type: string
-            string:
-              type: Format
-              fmt: "%s-policy"
-        - type: FromCompositeFieldPath
-          fromFieldPath: spec.iamRoleName
-          toFieldPath: spec.forProvider.roleNameRef.name
-        - type: CombineFromComposite
-          combine:
-            variables:
-            - fromFieldPath: spec.queueName
-            strategy: string
-            string:
-              fmt: '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["sqs:SendMessage","sqs:ReceiveMessage","sqs:DeleteMessage","sqs:GetQueueAttributes"],"Resource":"arn:aws:sqs:us-east-1:000000000000:%s"}]}'
-          toFieldPath: spec.forProvider.document
